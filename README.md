@@ -2,7 +2,7 @@
 Activity of a github users (made in reactjs)
 
 
-To run the app locally: (unix based OS)
+To run the app locally:
 
 * **Step 1**: run npm i
 
