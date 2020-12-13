@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment'
 import Modal from 'react-modal';
 import CommitDetails from './CommitDetails';
@@ -17,42 +17,30 @@ const customStyles = {
     }
   };
 
-export default class RepoList extends Component {
-    state = {
-        modalIsOpen: false,
-        activeItem: null,
-    };
-    componentDidUpdate (prevProps, prevState) {
-        
+export default function RepoList ({data, userName}) {
+   
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [activeItem, setActiveItem] = useState(null);
+
+   const onClickBack = () => {
+        setModalIsOpen(false);
     }
 
-    onClickBack = () => {
-        this.setState({
-            modalIsOpen: false,
-        })  
+    const openModal = (item) => {
+            setModalIsOpen(true);
+            setActiveItem(item);
     }
 
-    openModal = (item) => {
-            this.setState({
-                modalIsOpen: true,
-                activeItem: item,
-            })
-    }
-
-    closeModal = (item) => {
-        this.setState({
-            modalIsOpen: false,
-        })
+    const closeModal = (item) => {
+        setModalIsOpen(false);
     }
 
 
-    render() {
-        const {data, userName} = this.props;
         return (
         <div style={styles.mainDiv}>
             {
                 data.map((item, index) => (
-                    <ul key={index} onClick={() => this.openModal(item)}>
+                    <ul key={index} onClick={() => openModal(item)}>
                         <p 
                         style={{
                             display: 'flex',
@@ -65,17 +53,15 @@ export default class RepoList extends Component {
                 ))
             }
              <Modal
-          isOpen={this.state.modalIsOpen}
-          //onAfterOpen={afterOpenModal}
-          onRequestClose={this.closeModal}
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
           style={customStyles}
           contentLabel="Example Modal"
         >
-           <CommitDetails data={this.state.activeItem} userName={userName} onClickBack={this.onClickBack}/>
+           <CommitDetails data={activeItem} userName={userName} onClickBack={onClickBack}/>
         </Modal>
         </div>
         );
-    }
 }
 
 const styles = {

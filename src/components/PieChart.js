@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import {months} from '../constants';
 import axios from "axios";
 import {
@@ -9,16 +9,11 @@ import {
   
   import { Animation } from "@devexpress/dx-react-chart";
 
-class PieChart extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { 
-            monthlyData: []
-         }
-        }
+  export default function PieChart ({data, userName}) {
+   
+    const [monthlyData, setMonthlyData] = useState([]);
 
-        componentDidMount = async () => {
-            const {data, userName} = this.props; 
+    useEffect(async () => {
             let url = `https://api.github.com/repos/${userName}/${data.name}/stats/commit_activity`;
             let respJson = await axios.get(url);
             let commitActivity = respJson.data;
@@ -36,23 +31,18 @@ class PieChart extends Component {
                 };
                 dataM.push(temp);
               }
-            }  
-            this.setState({
-                monthlyData: dataM,
-            });
-          };
-
-    render() { 
+            } 
+            setMonthlyData(dataM);
+    }, [])
+    
+       
         return ( 
             <div style={{border: '1px solid #cdcdcd'}}>
-            <Chart data={this.state.monthlyData}>
+            <Chart data={monthlyData}>
             <PieSeries valueField="commit" argumentField="month" />
             <Title text="Yearly Activity" />
             <Animation />
           </Chart>
           </div>
          );
-    }
 }
- 
-export default PieChart;

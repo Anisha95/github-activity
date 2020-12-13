@@ -1,41 +1,24 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import "../App.css";
-import { FaSearch } from "react-icons/fa";
 import RepoList from "./RepoList";
 
-class Home extends Component {
-  state = {
-    geoLocCity: '',
-    weatherUpdate: null,
-    userName: '',
-    userDetails: null,
-  };
+export default function Home () {
 
-  getWeatherUpdate = (maxTemp, minTemp) => {
-    let {weekArr} = this.state;
-    let activeIndex = new Date().getDay();
-    weekArr[activeIndex].maxTemp = maxTemp;
-    weekArr[activeIndex].minTemp = minTemp;
-    this.setState({
-        weekArr: weekArr
-    })
-  };
+  const [userName, setUserName] = useState('');
+  const [userDetails, setuserDetails] = useState(null);
+ 
 
-  fetchUserDetails = (userName) => {
+  const fetchUserDetails = (userName) => {
       fetch(
         `https://api.github.com/users/${userName}/repos`
       )
         .then(response => response.json())
         .then(responseData => {
-          this.setState({
-            userDetails: responseData
-          });
+          setuserDetails(responseData)
         });
   
   }
 
-  
-  render() {
     return (
       <div style={styles.mainStyle}>
         <div 
@@ -46,14 +29,12 @@ class Home extends Component {
             style={{ width: "90%", border: "none", fontSize: '20px'}}
             placeholder={"Search or jump to..."}
             onChange={e =>
-              this.setState({
-                userName: e.target.value
-              })
+              setUserName( e.target.value)
             }
-            value={this.state.userName}
+            value={userName}
           />
          
-          <button onClick={() => this.fetchUserDetails(this.state.userName)}
+          <button onClick={() => fetchUserDetails(userName)}
             style={{backgroundColor: 'white', border: 'none'}}
           >
           <h2>SEARCH</h2>
@@ -61,14 +42,13 @@ class Home extends Component {
          
         </div>
         <div style={styles.secondDiv}>
-          {this.state.userDetails && !this.state.userDetails.message ? (
-         <RepoList data={this.state.userDetails} userName={this.state.userName}/>)
+          {userDetails && !userDetails.message ? (
+         <RepoList data={userDetails} userName={userName}/>)
             : null
           }
         </div>
       </div>
     );
-  }
 }
 
 const styles = {
@@ -99,5 +79,3 @@ const styles = {
     width: "100%"
   }
 };
-
-export default Home;
